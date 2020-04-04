@@ -1,1 +1,3 @@
 # WrappingChart
+
+```npm start```
