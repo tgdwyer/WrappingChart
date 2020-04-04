@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Wrappable Vis</title>
+    <script src="bundle.js"></script>
+</head>
+<body>
+    <h1>Wrappable chart with all axes labels:</h1> 
+    <div id="ChartDiv"></div>
+    <br>
+    <h1>Wrappable chart with left and bottom axes only:</h1> 
+    
+    <div id="ChartDiv2"></div>
+    <script>
+        Wrappable.chart("#ChartDiv",
+                            "wrappablenswtraffic.png",
+                            "wrappablenswtraffic-xaxis.png",
+                            "wrappablenswtraffic-xaxis.png",
+                            "wrappablenswtraffic-yaxis.png",
+                            "wrappablenswtraffic-yaxis.png")
+        Wrappable.chart("#ChartDiv2",
+                            "wrappablenswtraffic.png",
+                            null,
+                            "wrappablenswtraffic-xaxis.png",
+                            "wrappablenswtraffic-yaxis.png",
+                            null)
+    </script>
+</body>
+</html>
