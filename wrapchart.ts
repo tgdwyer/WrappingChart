@@ -103,11 +103,11 @@ async function chart(
         right:add(yAxisRightImageURL,false,true),
         bottom:add(xAxisBottomImageURL,true,false)
     }
-    const top = await promises.top;
-    const left = await promises.left;
-    const body = await promises.body;
-    const right = await promises.right;
-    const bottom = await promises.bottom;
+    const top = await promises.top,
+          left = await promises.left,
+          body = await promises.body,
+          right = await promises.right,
+          bottom = await promises.bottom;
     top.left(left.width)
     left.left(0)
     left.top(top.height)
