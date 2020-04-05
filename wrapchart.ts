@@ -1,4 +1,4 @@
-export async function chart(
+async function chart(
     targetElementSelector:string,
     bodyImageURL: string,
     xAxisTopImageURL: string|null,
@@ -8,7 +8,6 @@ export async function chart(
 {
     const element = document.getElementById(targetElementSelector);
     if(!element) return;
-    element.style.position = 'relative';
     
     class Wrappable {
         svg: SVGSVGElement;
@@ -93,31 +92,39 @@ export async function chart(
         })
         return new Wrappable(imgSrc, width, height, horizontal, vertical)
     }
-    const connect = (a: Wrappable,b: Wrappable) => {
+    const connect = (a: Wrappable, b: Wrappable) => {
         a.connect(b);
         b.connect(a);
     }
-    const axisX = await add(xAxisTopImageURL,true,false)
-    const axisY = await add(yAxisLeftImageURL,false,true)
-    const body = await add(bodyImageURL,true,true)
-    const axisYR = await add(yAxisRightImageURL,false,true)
-    const axisXB = await add(xAxisBottomImageURL,true,false)
-    axisX.left(axisY.width)
-    axisY.left(0)
-    axisY.top(axisX.height)
-    body.left(axisY.width)
-    body.top(axisX.height)
-    connect(axisX,body)
-    connect(axisY,body)
-    axisYR.left(axisY.width+body.width);
-    axisYR.top(axisX.height);
-    connect(axisYR,body);
-    connect(axisYR,axisY);
-    axisXB.left(axisY.width)
-    axisXB.top(axisX.height+body.height)
-    connect(axisXB,body);
-    connect(axisXB,axisX);
+    const promises = {
+        top:add(xAxisTopImageURL,true,false),
+        left:add(yAxisLeftImageURL,false,true),
+        body:add(bodyImageURL,true,true),
+        right:add(yAxisRightImageURL,false,true),
+        bottom:add(xAxisBottomImageURL,true,false)
+    }
+    const top = await promises.top;
+    const left = await promises.left;
+    const body = await promises.body;
+    const right = await promises.right;
+    const bottom = await promises.bottom;
+    top.left(left.width)
+    left.left(0)
+    left.top(top.height)
+    body.left(left.width)
+    body.top(top.height)
+    connect(top,body)
+    connect(left,body)
+    right.left(left.width+body.width);
+    right.top(top.height);
+    connect(right,body);
+    connect(right,left);
+    bottom.left(left.width)
+    bottom.top(top.height+body.height)
+    connect(bottom,body);
+    connect(bottom,top);
     
-    element.style.width = String(axisY.width+body.width+axisYR.width)+'px';
-    element.style.height = String(axisX.height+body.height+axisXB.height)+'px';
+    element.style.position = 'relative';
+    element.style.width = String(left.width+body.width+right.width)+'px';
+    element.style.height = String(top.height+body.height+bottom.height)+'px';
 }

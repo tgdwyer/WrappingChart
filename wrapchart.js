@@ -35,7 +35,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBottomImageURL, yAxisLeftImageURL, yAxisRightImageURL) {
     return __awaiter(this, void 0, void 0, function () {
         function add(imgSrc, horizontal, vertical) {
@@ -62,14 +61,13 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                 });
             });
         }
-        var element, Wrappable, connect, axisX, axisY, body, axisYR, axisXB;
+        var element, Wrappable, connect, promises, top, left, body, right, bottom;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     element = document.getElementById(targetElementSelector);
                     if (!element)
                         return [2 /*return*/];
-                    element.style.position = 'relative';
                     Wrappable = /** @class */ (function () {
                         function Wrappable(imageSrc, width, height, horizontal, vertical) {
                             var _this = this;
@@ -149,42 +147,49 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                         a.connect(b);
                         b.connect(a);
                     };
-                    return [4 /*yield*/, add(xAxisTopImageURL, true, false)];
+                    promises = {
+                        top: add(xAxisTopImageURL, true, false),
+                        left: add(yAxisLeftImageURL, false, true),
+                        body: add(bodyImageURL, true, true),
+                        right: add(yAxisRightImageURL, false, true),
+                        bottom: add(xAxisBottomImageURL, true, false)
+                    };
+                    return [4 /*yield*/, promises.top];
                 case 1:
-                    axisX = _a.sent();
-                    return [4 /*yield*/, add(yAxisLeftImageURL, false, true)];
+                    top = _a.sent();
+                    return [4 /*yield*/, promises.left];
                 case 2:
-                    axisY = _a.sent();
-                    return [4 /*yield*/, add(bodyImageURL, true, true)];
+                    left = _a.sent();
+                    return [4 /*yield*/, promises.body];
                 case 3:
                     body = _a.sent();
-                    return [4 /*yield*/, add(yAxisRightImageURL, false, true)];
+                    return [4 /*yield*/, promises.right];
                 case 4:
-                    axisYR = _a.sent();
-                    return [4 /*yield*/, add(xAxisBottomImageURL, true, false)];
+                    right = _a.sent();
+                    return [4 /*yield*/, promises.bottom];
                 case 5:
-                    axisXB = _a.sent();
-                    axisX.left(axisY.width);
-                    axisY.left(0);
-                    axisY.top(axisX.height);
-                    body.left(axisY.width);
-                    body.top(axisX.height);
-                    connect(axisX, body);
-                    connect(axisY, body);
-                    axisYR.left(axisY.width + body.width);
-                    axisYR.top(axisX.height);
-                    connect(axisYR, body);
-                    connect(axisYR, axisY);
-                    axisXB.left(axisY.width);
-                    axisXB.top(axisX.height + body.height);
-                    connect(axisXB, body);
-                    connect(axisXB, axisX);
-                    element.style.width = String(axisY.width + body.width + axisYR.width) + 'px';
-                    element.style.height = String(axisX.height + body.height + axisXB.height) + 'px';
+                    bottom = _a.sent();
+                    top.left(left.width);
+                    left.left(0);
+                    left.top(top.height);
+                    body.left(left.width);
+                    body.top(top.height);
+                    connect(top, body);
+                    connect(left, body);
+                    right.left(left.width + body.width);
+                    right.top(top.height);
+                    connect(right, body);
+                    connect(right, left);
+                    bottom.left(left.width);
+                    bottom.top(top.height + body.height);
+                    connect(bottom, body);
+                    connect(bottom, top);
+                    element.style.position = 'relative';
+                    element.style.width = String(left.width + body.width + right.width) + 'px';
+                    element.style.height = String(top.height + body.height + bottom.height) + 'px';
                     return [2 /*return*/];
             }
         });
     });
 }
-exports.chart = chart;
 //# sourceMappingURL=wrapchart.js.map
