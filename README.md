@@ -4,7 +4,7 @@
 npm install
 npm build
 ```
-then open ```index.html``` in your browser.
+then open ```index.html``` in your browser for examples.
 
 ## Using in a web page:
 Just consume the script, and create a div with a unique id somewhere in your page:
@@ -33,4 +33,6 @@ function chart(
     yAxisLeftImageURL: string|null,
     yAxisRightImageURL: string|null) 
 ```
+It assumes that axes images are sized correctly for the body image, i.e. that x Axes are the same width as the body, and that y-axes are the same height as the body.
+
 Note that you can specify ```null``` instead of an image for any of the axes labels and they will simply be omitted from the chart.
