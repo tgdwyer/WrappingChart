@@ -1,24 +1,17 @@
 {
-  "name": "WrappingChart",
+  "name": "wrappingchart",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "wrapchart.js",
   "dependencies": {
-    "@types/d3-drag": "^1.2.3",
-    "@types/d3-selection": "^1.4.1",
-    "@types/node": "^13.11.0",
-    "d3": "^5.15.1"
+    "@types/node": "^13.11.0"
   },
   "devDependencies": {
-    "ts-loader": "^3.1.1",
-    "typescript": "^2.6.1",
-    "webpack": "^3.8.1",
-    "webpack-dev-server": "^2.9.4"
+    "typescript": "^3.5.3"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --open",
-    "build": "webpack"
+    "build": "tsc",
+    "start": "npm run build -- -w"
   },
   "keywords": [],
   "author": "Tim Dwyer",
