@@ -1,5 +1,5 @@
 # WrappingChart
-
+![Compose Wrapping charts from images](WrapChart.gif)
 ```
 npm install
 npm build
