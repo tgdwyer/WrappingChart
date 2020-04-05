@@ -83,9 +83,9 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             svg_.setAttribute('width', String(width));
                             svg_.setAttribute('height', String(height));
                             var dragging = false;
-                            svg_.onmousedown = function (ev) { dragging = true; _this.startDraggers.forEach(function (f) { return f(ev.offsetX, ev.offsetY); }); };
-                            svg_.onmousemove = function (ev) { return dragging && _this.doDraggers.forEach(function (f) { return f(ev.offsetX, ev.offsetY); }); };
-                            svg_.onmouseup = function (ev) { return dragging = false; };
+                            svg_.onmousedown = function (e) { dragging = true; _this.startDraggers.forEach(function (f) { return f(e.offsetX, e.offsetY); }); };
+                            svg_.onmousemove = function (e) { return dragging && _this.doDraggers.forEach(function (f) { return f(_this, e.offsetX, e.offsetY); }); };
+                            svg_.onmouseup = function (e) { return dragging = false; };
                             element.appendChild(svg_);
                             var offsets = [];
                             var images = [];
@@ -111,9 +111,9 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                                     });
                                 }
                             ];
-                            this.doDraggers = [function (ex, ey) {
+                            this.doDraggers = [function (s, ex, ey) {
                                     return images.forEach(function (img, i) {
-                                        if (horizontal) {
+                                        if (_this.horizontal && s.horizontal) {
                                             var x = ex - offsets[i].x;
                                             if (x < -width)
                                                 x += 3 * width;
@@ -121,7 +121,7 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                                                 x -= 3 * width;
                                             img.setAttribute('x', String(x));
                                         }
-                                        if (vertical) {
+                                        if (_this.vertical && s.vertical) {
                                             var y = ey - offsets[i].y;
                                             if (y < -height)
                                                 y += 3 * height;
@@ -187,3 +187,4 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
     });
 }
 exports.chart = chart;
+//# sourceMappingURL=wrapchart.js.map

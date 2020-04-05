@@ -12,8 +12,8 @@ export async function chart(
     
     class Wrappable {
         svg: SVGSVGElement;
-        startDraggers: ((x:number,y:number) => void)[]
-        doDraggers: ((x:number,y:number) => void)[]
+        startDraggers: ((x:number, y:number) => void)[]
+        doDraggers: ((s:Wrappable, x:number, y:number) => void)[]
         constructor(imageSrc: string|null, public width: number, public height: number, public horizontal: boolean, public vertical: boolean) {
             const svg_ = document.createElementNS('http://www.w3.org/2000/svg','svg');
             svg_.style.position = 'absolute';
@@ -21,9 +21,9 @@ export async function chart(
             svg_.setAttribute('width',String(width))
             svg_.setAttribute('height',String(height))
             let dragging = false;
-            svg_.onmousedown=ev=>{dragging = true; this.startDraggers.forEach(f=>f(ev.offsetX,ev.offsetY))};
-            svg_.onmousemove=ev=>dragging && this.doDraggers.forEach(f=>f(ev.offsetX,ev.offsetY));
-            svg_.onmouseup=ev=>dragging = false;
+            svg_.onmousedown=e=>{dragging = true; this.startDraggers.forEach(f=>f(e.offsetX,e.offsetY))};
+            svg_.onmousemove=e=>dragging && this.doDraggers.forEach(f=>f(this,e.offsetX,e.offsetY));
+            svg_.onmouseup=e=>dragging = false;
             element!.appendChild(svg_);
             const offsets:Array<{x:number,y:number}> = []
             const images:Array<SVGImageElement> = []
@@ -47,15 +47,15 @@ export async function chart(
                     offsets[i].y = y - Number(img.getAttribute('y'))
                 })
             ];
-            this.doDraggers = [(ex:number,ey:number)=>
+            this.doDraggers = [(s:Wrappable, ex:number,ey:number)=>
                 images.forEach((img,i)=>{
-                    if(horizontal){
+                    if(this.horizontal&&s.horizontal){
                         let x = ex-offsets[i].x
                         if (x < -width) x += 3*width;
                         if (x > width) x -= 3*width;
                         img.setAttribute('x',String(x))
                     }
-                    if(vertical) {
+                    if(this.vertical&&s.vertical) {
                         let y = ey-offsets[i].y
                         if (y < -height) y += 3*height;
                         if (y > height) y -= 3*height;
