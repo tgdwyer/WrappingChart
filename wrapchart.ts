@@ -14,16 +14,16 @@ async function chart(
         startDraggers: ((x:number, y:number) => void)[]
         doDraggers: ((s:Wrappable, x:number, y:number) => void)[]
         constructor(imageSrc: string|null, public width: number, public height: number, public horizontal: boolean, public vertical: boolean) {
-            const svg_ = document.createElementNS('http://www.w3.org/2000/svg','svg');
-            svg_.style.position = 'absolute';
-            svg_.setAttribute('viewBox',`0 0 ${width} ${height}`)
-            svg_.setAttribute('width',String(width))
-            svg_.setAttribute('height',String(height))
+            this.svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+            this.svg.style.position = 'absolute';
+            this.svg.setAttribute('viewBox',`0 0 ${width} ${height}`)
+            this.svg.setAttribute('width',String(width))
+            this.svg.setAttribute('height',String(height))
             let dragging = false;
-            svg_.onmousedown=e=>{dragging = true; this.startDraggers.forEach(f=>f(e.offsetX,e.offsetY))};
-            svg_.onmousemove=e=>dragging && this.doDraggers.forEach(f=>f(this,e.offsetX,e.offsetY));
-            svg_.onmouseup=e=>dragging = false;
-            element!.appendChild(svg_);
+            this.svg.onmousedown=e=>{dragging = true; this.startDraggers.forEach(f=>f(e.offsetX,e.offsetY))};
+            this.svg.onmousemove=e=>dragging && this.doDraggers.forEach(f=>f(this,e.offsetX,e.offsetY));
+            this.svg.onmouseup=e=>dragging = false;
+            element!.appendChild(this.svg);
             const offsets:Array<{x:number,y:number}> = []
             const images:Array<SVGImageElement> = []
             for (let j = 0; j < 3; j++) {
@@ -35,7 +35,7 @@ async function chart(
                     svgimg.setAttribute('x',String(-width + i*width));
                     svgimg.setAttribute('y',String(-height + j*height));
                     svgimg.setAttribute( 'visibility', 'visible');
-                    svg_.appendChild(svgimg);
+                    this.svg.appendChild(svgimg);
                     images.push(svgimg);
                     offsets.push({x:0,y:0})
                 }
@@ -61,7 +61,6 @@ async function chart(
                         img.setAttribute('y',String(y))
                     }
                 })]
-            this.svg = svg_;
         }
         connect(b: Wrappable) {
             this.startDraggers.push(b.startDraggers[0])

@@ -75,16 +75,16 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             this.height = height;
                             this.horizontal = horizontal;
                             this.vertical = vertical;
-                            var svg_ = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                            svg_.style.position = 'absolute';
-                            svg_.setAttribute('viewBox', "0 0 " + width + " " + height);
-                            svg_.setAttribute('width', String(width));
-                            svg_.setAttribute('height', String(height));
+                            this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                            this.svg.style.position = 'absolute';
+                            this.svg.setAttribute('viewBox', "0 0 " + width + " " + height);
+                            this.svg.setAttribute('width', String(width));
+                            this.svg.setAttribute('height', String(height));
                             var dragging = false;
-                            svg_.onmousedown = function (e) { dragging = true; _this.startDraggers.forEach(function (f) { return f(e.offsetX, e.offsetY); }); };
-                            svg_.onmousemove = function (e) { return dragging && _this.doDraggers.forEach(function (f) { return f(_this, e.offsetX, e.offsetY); }); };
-                            svg_.onmouseup = function (e) { return dragging = false; };
-                            element.appendChild(svg_);
+                            this.svg.onmousedown = function (e) { dragging = true; _this.startDraggers.forEach(function (f) { return f(e.offsetX, e.offsetY); }); };
+                            this.svg.onmousemove = function (e) { return dragging && _this.doDraggers.forEach(function (f) { return f(_this, e.offsetX, e.offsetY); }); };
+                            this.svg.onmouseup = function (e) { return dragging = false; };
+                            element.appendChild(this.svg);
                             var offsets = [];
                             var images = [];
                             for (var j = 0; j < 3; j++) {
@@ -97,7 +97,7 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                                     svgimg.setAttribute('x', String(-width + i * width));
                                     svgimg.setAttribute('y', String(-height + j * height));
                                     svgimg.setAttribute('visibility', 'visible');
-                                    svg_.appendChild(svgimg);
+                                    this.svg.appendChild(svgimg);
                                     images.push(svgimg);
                                     offsets.push({ x: 0, y: 0 });
                                 }
@@ -129,7 +129,6 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                                         }
                                     });
                                 }];
-                            this.svg = svg_;
                         }
                         Wrappable.prototype.connect = function (b) {
                             this.startDraggers.push(b.startDraggers[0]);
