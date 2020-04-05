@@ -7,12 +7,12 @@ npm build
 then open ```index.html``` in your browser.
 
 ## Using in a web page:
-Just consume the script, and create a div with a unique id:
+Just consume the script, and create a div with a unique id somewhere in your page:
 ```
 <script src="wrapchart.js"></script>
 <div id="ChartDiv"></div>
 ```
-The following call populates the div with a wrap chart constructed from the specified images:
+Then call the ```chart``` function to populate the div with a wrap chart constructed from the specified images:
 ```
 <script>
     chart("ChartDiv",
