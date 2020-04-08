@@ -61,6 +61,31 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                 });
             });
         }
+        function makeDraggable(s, start, drag) {
+            var dragging = false;
+            var touchid = -1;
+            s.onmousedown = function (e) { dragging = true; start(e.offsetX, e.offsetY); };
+            s.onmousemove = function (e) { return dragging && drag(e.offsetX, e.offsetY); };
+            s.ontouchstart = function (e) {
+                e.preventDefault();
+                var touch = e.changedTouches[0];
+                touchid = touch.identifier;
+                start(touch.clientX, touch.clientY);
+            };
+            s.ontouchmove = function (e) {
+                e.preventDefault();
+                var touch = null;
+                for (var i = 0; i < e.touches.length; i++) {
+                    if (e.touches[i].identifier === touchid)
+                        touch = e.touches[i];
+                }
+                if (touch) {
+                    drag(touch.clientX, touch.clientY);
+                }
+            };
+            s.ontouchend = s.ontouchcancel = function (e) { return touchid = -1; };
+            s.onmouseup = function (e) { return dragging = false; };
+        }
         var element, Wrappable, connect, promises, top, left, body, right, bottom;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -80,10 +105,7 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             this.svg.setAttribute('viewBox', "0 0 " + width + " " + height);
                             this.svg.setAttribute('width', String(width));
                             this.svg.setAttribute('height', String(height));
-                            var dragging = false;
-                            this.svg.onmousedown = function (e) { dragging = true; _this.startDraggers.forEach(function (f) { return f(e.offsetX, e.offsetY); }); };
-                            this.svg.onmousemove = function (e) { return dragging && _this.doDraggers.forEach(function (f) { return f(_this, e.offsetX, e.offsetY); }); };
-                            this.svg.onmouseup = function (e) { return dragging = false; };
+                            makeDraggable(this.svg, function (x, y) { return _this.startDraggers.forEach(function (f) { return f(x, y); }); }, function (x, y) { return _this.doDraggers.forEach(function (f) { return f(_this, x, y); }); });
                             element.appendChild(this.svg);
                             var offsets = [];
                             var images = [];

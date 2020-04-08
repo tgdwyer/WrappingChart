@@ -9,7 +9,6 @@ async function chart(
 {
     const element = document.getElementById(targetElementSelector);
     if(!element) return;
-    
     class Wrappable {
         svg: SVGSVGElement;
         startDraggers: ((x:number, y:number) => void)[]
@@ -20,13 +19,10 @@ async function chart(
             this.svg.setAttribute('viewBox',`0 0 ${width} ${height}`)
             this.svg.setAttribute('width',String(width))
             this.svg.setAttribute('height',String(height))
-            let dragging = false;
-            this.svg.onmousedown=e=>{dragging = true; this.startDraggers.forEach(f=>f(e.offsetX,e.offsetY))};
-            this.svg.onmousemove=e=>dragging && this.doDraggers.forEach(f=>f(this,e.offsetX,e.offsetY));
-            this.svg.onmouseup=e=>dragging = false;
+            makeDraggable(this.svg,(x,y)=>this.startDraggers.forEach(f=>f(x,y)),(x,y)=>this.doDraggers.forEach(f=>f(this,x,y)));
             element!.appendChild(this.svg);
             const offsets:Array<{x:number,y:number}> = []
-            const images:Array<SVGImageElement> = []
+            const images:Array<SVGImageElement> = [] 
             for (let j = 0; j < 3; j++) {
                 for (let i = 0; i < 3; i++) {
                     var svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
@@ -127,4 +123,30 @@ async function chart(
     element.style.position = 'relative';
     element.style.width = String(left.width+body.width+right.width)+'px';
     element.style.height = String(top.height+body.height+bottom.height)+'px';
+
+    
+    function makeDraggable(s:SVGSVGElement, start:(x:number,y:number)=>void, drag:(x:number,y:number)=>void) {
+        let dragging = false;
+        let touchid = -1;
+        s.onmousedown=e=>{dragging = true; start(e.offsetX,e.offsetY)};
+        s.onmousemove=e=>dragging && drag(e.offsetX,e.offsetY);
+        s.ontouchstart=e=>{
+            e.preventDefault();
+            const touch = e.changedTouches[0]; 
+            touchid = touch.identifier; 
+            start(touch.clientX,touch.clientY);
+        }
+        s.ontouchmove=e=>{
+            e.preventDefault();
+            let touch:any = null;
+            for(let i = 0; i < e.touches.length; i++) { 
+                if(e.touches[i].identifier === touchid) touch = e.touches[i];
+            }
+            if(touch) {
+                drag(touch.clientX,touch.clientY);
+            }
+        }
+        s.ontouchend=s.ontouchcancel=e=>touchid = -1;
+        s.onmouseup=e=>dragging = false;
+    }
 }
