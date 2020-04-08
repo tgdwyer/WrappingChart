@@ -4,7 +4,8 @@ async function chart(
     xAxisTopImageURL: string|null,
     xAxisBottomImageURL: string|null,
     yAxisLeftImageURL: string|null,
-    yAxisRightImageURL: string|null) 
+    yAxisRightImageURL: string|null,
+    panConstraint: string|undefined) 
 {
     const element = document.getElementById(targetElementSelector);
     if(!element) return;
@@ -48,13 +49,13 @@ async function chart(
             ];
             this.doDraggers = [(s:Wrappable, ex:number,ey:number)=>
                 images.forEach((img,i)=>{
-                    if(this.horizontal&&s.horizontal){
+                    if(this.horizontal&&s.horizontal&&panConstraint!=="vertical"){
                         let x = ex-offsets[i].x
                         if (x < -width) x += 3*width;
                         if (x > width) x -= 3*width;
                         img.setAttribute('x',String(x))
                     }
-                    if(this.vertical&&s.vertical) {
+                    if(this.vertical&&s.vertical&&panConstraint!=="horizontal") {
                         let y = ey-offsets[i].y
                         if (y < -height) y += 3*height;
                         if (y > height) y -= 3*height;

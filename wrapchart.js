@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBottomImageURL, yAxisLeftImageURL, yAxisRightImageURL) {
+function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBottomImageURL, yAxisLeftImageURL, yAxisRightImageURL, panConstraint) {
     return __awaiter(this, void 0, void 0, function () {
         function add(imgSrc, horizontal, vertical) {
             return __awaiter(this, void 0, void 0, function () {
@@ -111,7 +111,7 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             ];
                             this.doDraggers = [function (s, ex, ey) {
                                     return images.forEach(function (img, i) {
-                                        if (_this.horizontal && s.horizontal) {
+                                        if (_this.horizontal && s.horizontal && panConstraint !== "vertical") {
                                             var x = ex - offsets[i].x;
                                             if (x < -width)
                                                 x += 3 * width;
@@ -119,7 +119,7 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                                                 x -= 3 * width;
                                             img.setAttribute('x', String(x));
                                         }
-                                        if (_this.vertical && s.vertical) {
+                                        if (_this.vertical && s.vertical && panConstraint !== "horizontal") {
                                             var y = ey - offsets[i].y;
                                             if (y < -height)
                                                 y += 3 * height;

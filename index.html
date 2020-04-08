@@ -6,27 +6,51 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Wrappable Vis</title>
     <script src="wrapchart.js"></script>
+<style>
+h1 {
+    font-family: Helvetica, Arial, sans-serif;
+}
+</style>
 </head>
 <body>
     <h1>Wrappable chart with all axes labels:</h1> 
     <div id="ChartDiv"></div>
     <br>
     <h1>Wrappable chart with left and bottom axes only:</h1> 
-    
     <div id="ChartDiv2"></div>
+    <br>
+    <h1>Horizontal pan constraint:</h1> 
+    <div id="ChartDiv3"></div>
+    <br>
+    <h1>Vertical pan constraint:</h1> 
+    <div id="ChartDiv4"></div>
     <script>
         chart("ChartDiv",
-                            "wrappablenswtraffic.png",
-                            "wrappablenswtraffic-xaxis-top.png",
-                            "wrappablenswtraffic-xaxis.png",
-                            "wrappablenswtraffic-yaxis.png",
-                            "wrappablenswtraffic-yaxis.png")
+            "wrappablenswtraffic.png",
+            "wrappablenswtraffic-xaxis-top.png",
+            "wrappablenswtraffic-xaxis.png",
+            "wrappablenswtraffic-yaxis.png",
+            "wrappablenswtraffic-yaxis.png")
         chart("ChartDiv2",
-                            "wrappablenswtraffic.png",
-                            null,
-                            "wrappablenswtraffic-xaxis.png",
-                            "wrappablenswtraffic-yaxis.png",
-                            null)
+            "wrappablenswtraffic.png",
+            null,
+            "wrappablenswtraffic-xaxis.png",
+            "wrappablenswtraffic-yaxis.png",
+            null)
+        chart("ChartDiv3",
+            "sankeycycle.png",
+            null,
+            null,
+            null,
+            null,
+            "horizontal")    
+        chart("ChartDiv4",
+            "verticalsankeycycle.png",
+            null,
+            null,
+            null,
+            null,
+            "vertical")                    
     </script>
 </body>
 </html>
