@@ -1,3 +1,4 @@
+type Constraint = "horizontal" | "vertical" | "diagonal" | "antidiagonal"
 async function chart(
     targetElementSelector:string,
     bodyImageURL: string,
@@ -5,7 +6,7 @@ async function chart(
     xAxisBottomImageURL: string|null,
     yAxisLeftImageURL: string|null,
     yAxisRightImageURL: string|null,
-    panConstraint: string|undefined) 
+    panConstraint: Constraint|undefined) 
 {
     const element = document.getElementById(targetElementSelector);
     if(!element) return;
@@ -39,23 +40,27 @@ async function chart(
             }
             this.startDraggers = [(x:number,y:number) =>
                 images.forEach((img,i)=>{
-                    offsets[i].x = x - Number(img.getAttribute('x'))
-                    offsets[i].y = y - Number(img.getAttribute('y'))
+                    let ox = x, oy = y;
+                    if (panConstraint === "diagonal") ox = oy = (x+y)/2;
+                    offsets[i].x = ox - Number(img.getAttribute('x'))
+                    offsets[i].y = oy - Number(img.getAttribute('y'))
                 })
             ];
             this.doDraggers = [(s:Wrappable, ex:number,ey:number)=>
                 images.forEach((img,i)=>{
-                    if(this.horizontal&&s.horizontal&&panConstraint!=="vertical"){
-                        let x = ex-offsets[i].x
-                        if (x < -width) x += 3*width;
-                        if (x > width) x -= 3*width;
-                        img.setAttribute('x',String(x))
-                    }
-                    if(this.vertical&&s.vertical&&panConstraint!=="horizontal") {
-                        let y = ey-offsets[i].y
-                        if (y < -height) y += 3*height;
-                        if (y > height) y -= 3*height;
-                        img.setAttribute('y',String(y))
+                    const teleport = (v: number, d: number)=> v < -d ? v+3*d : v > d ? v-3*d : v;
+                    if(panConstraint !== "diagonal"){
+                        const x = teleport(ex-offsets[i].x,width),
+                              y = teleport(ey-offsets[i].y,height);
+                        if(this.horizontal&&s.horizontal&&panConstraint!=="vertical") img.setAttribute('x',String(x))
+                        if(this.vertical&&s.vertical&&panConstraint!=="horizontal") img.setAttribute('y',String(y))
+                    } else { // diagonal
+                        // x and y are the amounts dragged in the horizontal and vertical dimensions since start drag
+                        // we project x and y onto the diagonal vector (1,1).
+                        const x = teleport((ex+ey)/2 - offsets[i].x,width),
+                              y = teleport((ex+ey)/2 - offsets[i].y,height);
+                        if(this.horizontal) img.setAttribute('x',String(x))
+                        if(this.vertical) img.setAttribute('y',String(y))
                     }
                 })]
         }
@@ -119,6 +124,9 @@ async function chart(
     bottom.top(top.height+body.height)
     connect(bottom,body);
     connect(bottom,top);
+    if(panConstraint==="diagonal") {
+        connect(left,top)
+    }
     
     element.style.position = 'relative';
     element.style.width = String(left.width+body.width+right.width)+'px';
@@ -146,7 +154,7 @@ async function chart(
                 drag(touch.clientX,touch.clientY);
             }
         }
-        s.ontouchend=s.ontouchcancel=e=>touchid = -1;
-        s.onmouseup=e=>dragging = false;
+        s.ontouchend = s.ontouchcancel = e=>touchid = -1;
+        s.onmouseout = s.onmouseup = e=>dragging = false;
     }
 }

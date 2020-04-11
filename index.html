@@ -24,6 +24,9 @@ h1 {
     <br>
     <h1>Vertical pan constraint:</h1> 
     <div id="ChartDiv4"></div>
+    <br>
+    <h1>Diagonal pan constraint:</h1> 
+    <div id="ChartDiv5"></div>
     <script>
         chart("ChartDiv",
             "wrappablenswtraffic.png",
@@ -50,7 +53,14 @@ h1 {
             null,
             null,
             null,
-            "vertical")                    
+            "vertical")         
+        chart("ChartDiv5",
+            "matrix_chart@1.png",
+            "matrix_horizontalaxis.png",
+            null,
+            "matrix_verticalaxis.png",
+            null,
+            "diagonal")                
     </script>
 </body>
 </html>

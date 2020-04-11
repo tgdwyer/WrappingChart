@@ -84,7 +84,7 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                 }
             };
             s.ontouchend = s.ontouchcancel = function (e) { return touchid = -1; };
-            s.onmouseup = function (e) { return dragging = false; };
+            s.onmouseout = s.onmouseup = function (e) { return dragging = false; };
         }
         var element, Wrappable, connect, promises, top, left, body, right, bottom;
         return __generator(this, function (_a) {
@@ -126,28 +126,32 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             }
                             this.startDraggers = [function (x, y) {
                                     return images.forEach(function (img, i) {
-                                        offsets[i].x = x - Number(img.getAttribute('x'));
-                                        offsets[i].y = y - Number(img.getAttribute('y'));
+                                        var ox = x, oy = y;
+                                        if (panConstraint === "diagonal")
+                                            ox = oy = (x + y) / 2;
+                                        offsets[i].x = ox - Number(img.getAttribute('x'));
+                                        offsets[i].y = oy - Number(img.getAttribute('y'));
                                     });
                                 }
                             ];
                             this.doDraggers = [function (s, ex, ey) {
                                     return images.forEach(function (img, i) {
-                                        if (_this.horizontal && s.horizontal && panConstraint !== "vertical") {
-                                            var x = ex - offsets[i].x;
-                                            if (x < -width)
-                                                x += 3 * width;
-                                            if (x > width)
-                                                x -= 3 * width;
-                                            img.setAttribute('x', String(x));
+                                        var teleport = function (v, d) { return v < -d ? v + 3 * d : v > d ? v - 3 * d : v; };
+                                        if (panConstraint !== "diagonal") {
+                                            var x = teleport(ex - offsets[i].x, width), y = teleport(ey - offsets[i].y, height);
+                                            if (_this.horizontal && s.horizontal && panConstraint !== "vertical")
+                                                img.setAttribute('x', String(x));
+                                            if (_this.vertical && s.vertical && panConstraint !== "horizontal")
+                                                img.setAttribute('y', String(y));
                                         }
-                                        if (_this.vertical && s.vertical && panConstraint !== "horizontal") {
-                                            var y = ey - offsets[i].y;
-                                            if (y < -height)
-                                                y += 3 * height;
-                                            if (y > height)
-                                                y -= 3 * height;
-                                            img.setAttribute('y', String(y));
+                                        else { // diagonal
+                                            // x and y are the amounts dragged in the horizontal and vertical dimensions since start drag
+                                            // we project x and y onto the diagonal vector (1,1).
+                                            var x = teleport((ex + ey) / 2 - offsets[i].x, width), y = teleport((ex + ey) / 2 - offsets[i].y, height);
+                                            if (_this.horizontal)
+                                                img.setAttribute('x', String(x));
+                                            if (_this.vertical)
+                                                img.setAttribute('y', String(y));
                                         }
                                     });
                                 }];
@@ -205,6 +209,9 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                     bottom.top(top.height + body.height);
                     connect(bottom, body);
                     connect(bottom, top);
+                    if (panConstraint === "diagonal") {
+                        connect(left, top);
+                    }
                     element.style.position = 'relative';
                     element.style.width = String(left.width + body.width + right.width) + 'px';
                     element.style.height = String(top.height + body.height + bottom.height) + 'px';
