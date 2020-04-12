@@ -41,7 +41,7 @@ async function chart(
             this.startDraggers = [(x:number,y:number) =>
                 images.forEach((img,i)=>{
                     const diagonal = (x+y)/2; // scalar projection of x and y on diagonal vector (1,1)
-                    const [ox,oy] = panConstraint === "diagonal" ? [(x+y)/2,(x+y)/2] : [x,y];
+                    const [ox,oy] = panConstraint === "diagonal" ? [(x+y)/2,(x+y)/2] : panConstraint === "antidiagonal" ? [-(y-x)/2,(y-x)/2] : [x,y];
                     offsets[i].x = ox - Number(img.getAttribute('x'))
                     offsets[i].y = oy - Number(img.getAttribute('y'))
                 })
@@ -49,14 +49,19 @@ async function chart(
             this.doDraggers = [(s:Wrappable, ex:number,ey:number)=>
                 images.forEach((img,i)=>{
                     const wrap = (v: number, d: number)=> v < -d ? v+3*d : v > d ? v-3*d : v;
-                    if(panConstraint !== "diagonal"){
+                    if(!panConstraint || panConstraint === "horizontal" || panConstraint === "vertical"){
                         const x = wrap(ex-offsets[i].x,width),
                               y = wrap(ey-offsets[i].y,height);
                         if(this.horizontal&&s.horizontal&&panConstraint!=="vertical") img.setAttribute('x',String(x))
                         if(this.vertical&&s.vertical&&panConstraint!=="horizontal") img.setAttribute('y',String(y))
-                    } else { // diagonal takes only the projection of the drag on the diagonal vector (1,1)
+                    } else if (panConstraint === 'diagonal') { // diagonal takes only the projection of the drag on the diagonal vector (1,1)
                         const x = wrap((ex+ey)/2 - offsets[i].x,width),
                               y = wrap((ex+ey)/2 - offsets[i].y,height);
+                        if(this.horizontal) img.setAttribute('x',String(x))
+                        if(this.vertical) img.setAttribute('y',String(y))
+                    } else { // antidiagonal, project on (-1,1)
+                        const x = wrap(-(ey-ex)/2 - offsets[i].x,width),
+                              y = wrap((ey-ex)/2 - offsets[i].y,height);
                         if(this.horizontal) img.setAttribute('x',String(x))
                         if(this.vertical) img.setAttribute('y',String(y))
                     }

@@ -127,7 +127,7 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             this.startDraggers = [function (x, y) {
                                     return images.forEach(function (img, i) {
                                         var diagonal = (x + y) / 2; // scalar projection of x and y on diagonal vector (1,1)
-                                        var _a = panConstraint === "diagonal" ? [(x + y) / 2, (x + y) / 2] : [x, y], ox = _a[0], oy = _a[1];
+                                        var _a = panConstraint === "diagonal" ? [(x + y) / 2, (x + y) / 2] : panConstraint === "antidiagonal" ? [-(y - x) / 2, (y - x) / 2] : [x, y], ox = _a[0], oy = _a[1];
                                         offsets[i].x = ox - Number(img.getAttribute('x'));
                                         offsets[i].y = oy - Number(img.getAttribute('y'));
                                     });
@@ -136,15 +136,22 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             this.doDraggers = [function (s, ex, ey) {
                                     return images.forEach(function (img, i) {
                                         var wrap = function (v, d) { return v < -d ? v + 3 * d : v > d ? v - 3 * d : v; };
-                                        if (panConstraint !== "diagonal") {
+                                        if (!panConstraint || panConstraint === "horizontal" || panConstraint === "vertical") {
                                             var x = wrap(ex - offsets[i].x, width), y = wrap(ey - offsets[i].y, height);
                                             if (_this.horizontal && s.horizontal && panConstraint !== "vertical")
                                                 img.setAttribute('x', String(x));
                                             if (_this.vertical && s.vertical && panConstraint !== "horizontal")
                                                 img.setAttribute('y', String(y));
                                         }
-                                        else { // diagonal takes only the projection of the drag on the diagonal vector (1,1)
+                                        else if (panConstraint === 'diagonal') { // diagonal takes only the projection of the drag on the diagonal vector (1,1)
                                             var x = wrap((ex + ey) / 2 - offsets[i].x, width), y = wrap((ex + ey) / 2 - offsets[i].y, height);
+                                            if (_this.horizontal)
+                                                img.setAttribute('x', String(x));
+                                            if (_this.vertical)
+                                                img.setAttribute('y', String(y));
+                                        }
+                                        else { // antidiagonal, project on (-1,1)
+                                            var x = wrap(-(ey - ex) / 2 - offsets[i].x, width), y = wrap((ey - ex) / 2 - offsets[i].y, height);
                                             if (_this.horizontal)
                                                 img.setAttribute('x', String(x));
                                             if (_this.vertical)
