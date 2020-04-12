@@ -111,24 +111,23 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             var images = [];
                             for (var j = 0; j < 3; j++) {
                                 for (var i = 0; i < 3; i++) {
-                                    var svgimg = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+                                    var img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
                                     if (imageSrc)
-                                        svgimg.setAttribute('href', imageSrc);
-                                    svgimg.setAttribute('width', String(width));
-                                    svgimg.setAttribute('height', String(height));
-                                    svgimg.setAttribute('x', String(-width + i * width));
-                                    svgimg.setAttribute('y', String(-height + j * height));
-                                    svgimg.setAttribute('visibility', 'visible');
-                                    this.svg.appendChild(svgimg);
-                                    images.push(svgimg);
+                                        img.setAttribute('href', imageSrc);
+                                    img.setAttribute('width', String(width));
+                                    img.setAttribute('height', String(height));
+                                    img.setAttribute('x', String(-width + i * width));
+                                    img.setAttribute('y', String(-height + j * height));
+                                    img.setAttribute('visibility', 'visible');
+                                    this.svg.appendChild(img);
+                                    images.push(img);
                                     offsets.push({ x: 0, y: 0 });
                                 }
                             }
                             this.startDraggers = [function (x, y) {
                                     return images.forEach(function (img, i) {
-                                        var ox = x, oy = y;
-                                        if (panConstraint === "diagonal")
-                                            ox = oy = (x + y) / 2;
+                                        var diagonal = (x + y) / 2; // scalar projection of x and y on diagonal vector (1,1)
+                                        var _a = panConstraint === "diagonal" ? [(x + y) / 2, (x + y) / 2] : [x, y], ox = _a[0], oy = _a[1];
                                         offsets[i].x = ox - Number(img.getAttribute('x'));
                                         offsets[i].y = oy - Number(img.getAttribute('y'));
                                     });
@@ -136,18 +135,16 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             ];
                             this.doDraggers = [function (s, ex, ey) {
                                     return images.forEach(function (img, i) {
-                                        var teleport = function (v, d) { return v < -d ? v + 3 * d : v > d ? v - 3 * d : v; };
+                                        var wrap = function (v, d) { return v < -d ? v + 3 * d : v > d ? v - 3 * d : v; };
                                         if (panConstraint !== "diagonal") {
-                                            var x = teleport(ex - offsets[i].x, width), y = teleport(ey - offsets[i].y, height);
+                                            var x = wrap(ex - offsets[i].x, width), y = wrap(ey - offsets[i].y, height);
                                             if (_this.horizontal && s.horizontal && panConstraint !== "vertical")
                                                 img.setAttribute('x', String(x));
                                             if (_this.vertical && s.vertical && panConstraint !== "horizontal")
                                                 img.setAttribute('y', String(y));
                                         }
-                                        else { // diagonal
-                                            // x and y are the amounts dragged in the horizontal and vertical dimensions since start drag
-                                            // we project x and y onto the diagonal vector (1,1).
-                                            var x = teleport((ex + ey) / 2 - offsets[i].x, width), y = teleport((ex + ey) / 2 - offsets[i].y, height);
+                                        else { // diagonal takes only the projection of the drag on the diagonal vector (1,1)
+                                            var x = wrap((ex + ey) / 2 - offsets[i].x, width), y = wrap((ex + ey) / 2 - offsets[i].y, height);
                                             if (_this.horizontal)
                                                 img.setAttribute('x', String(x));
                                             if (_this.vertical)

@@ -26,39 +26,37 @@ async function chart(
             const images:Array<SVGImageElement> = [] 
             for (let j = 0; j < 3; j++) {
                 for (let i = 0; i < 3; i++) {
-                    var svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
-                    if (imageSrc) svgimg.setAttribute('href', imageSrc);
-                    svgimg.setAttribute('width',String(width));
-                    svgimg.setAttribute('height',String(height));
-                    svgimg.setAttribute('x',String(-width + i*width));
-                    svgimg.setAttribute('y',String(-height + j*height));
-                    svgimg.setAttribute( 'visibility', 'visible');
-                    this.svg.appendChild(svgimg);
-                    images.push(svgimg);
+                    const img = document.createElementNS('http://www.w3.org/2000/svg','image');
+                    if (imageSrc) img.setAttribute('href', imageSrc);
+                    img.setAttribute('width',String(width));
+                    img.setAttribute('height',String(height));
+                    img.setAttribute('x',String(-width + i*width));
+                    img.setAttribute('y',String(-height + j*height));
+                    img.setAttribute( 'visibility', 'visible');
+                    this.svg.appendChild(img);
+                    images.push(img);
                     offsets.push({x:0,y:0})
                 }
             }
             this.startDraggers = [(x:number,y:number) =>
                 images.forEach((img,i)=>{
-                    let ox = x, oy = y;
-                    if (panConstraint === "diagonal") ox = oy = (x+y)/2;
+                    const diagonal = (x+y)/2; // scalar projection of x and y on diagonal vector (1,1)
+                    const [ox,oy] = panConstraint === "diagonal" ? [(x+y)/2,(x+y)/2] : [x,y];
                     offsets[i].x = ox - Number(img.getAttribute('x'))
                     offsets[i].y = oy - Number(img.getAttribute('y'))
                 })
             ];
             this.doDraggers = [(s:Wrappable, ex:number,ey:number)=>
                 images.forEach((img,i)=>{
-                    const teleport = (v: number, d: number)=> v < -d ? v+3*d : v > d ? v-3*d : v;
+                    const wrap = (v: number, d: number)=> v < -d ? v+3*d : v > d ? v-3*d : v;
                     if(panConstraint !== "diagonal"){
-                        const x = teleport(ex-offsets[i].x,width),
-                              y = teleport(ey-offsets[i].y,height);
+                        const x = wrap(ex-offsets[i].x,width),
+                              y = wrap(ey-offsets[i].y,height);
                         if(this.horizontal&&s.horizontal&&panConstraint!=="vertical") img.setAttribute('x',String(x))
                         if(this.vertical&&s.vertical&&panConstraint!=="horizontal") img.setAttribute('y',String(y))
-                    } else { // diagonal
-                        // x and y are the amounts dragged in the horizontal and vertical dimensions since start drag
-                        // we project x and y onto the diagonal vector (1,1).
-                        const x = teleport((ex+ey)/2 - offsets[i].x,width),
-                              y = teleport((ex+ey)/2 - offsets[i].y,height);
+                    } else { // diagonal takes only the projection of the drag on the diagonal vector (1,1)
+                        const x = wrap((ex+ey)/2 - offsets[i].x,width),
+                              y = wrap((ex+ey)/2 - offsets[i].y,height);
                         if(this.horizontal) img.setAttribute('x',String(x))
                         if(this.vertical) img.setAttribute('y',String(y))
                     }
