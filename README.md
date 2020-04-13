@@ -12,7 +12,7 @@ Just consume the script, and create a div with a unique id somewhere in your pag
 <script src="wrapchart.js"></script>
 <div id="ChartDiv"></div>
 ```
-Then call the ```chart``` function to populate the div with a wrap chart constructed from the specified images:
+Then call the ```wrapChart``` function to populate the div with a wrap chart constructed from the specified images:
 ```
 <script>
     wrapChart("ChartDiv",
