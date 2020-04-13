@@ -7,7 +7,9 @@ npm build
 then open ```index.html``` in your browser for examples.
 
 ## Using in a web page:
-Just consume the script, and create a div with a unique id somewhere in your page:
+Make a chart that wraps around in D3, Excel, Powerpoint, Illustrator.  Optionally, you can also make images for the top/bottom horizontal axes and the left/right vertical axes, for example, by screen-shotting the chart.  Their dimensions (in pixels) should precisely match the dimensions of the chart image.
+
+To use in a web page, just create a div with a unique id somewhere in your page and source the script:
 ```
 <script src="wrapchart.js"></script>
 <div id="ChartDiv"></div>
