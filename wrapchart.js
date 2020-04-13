@@ -220,8 +220,11 @@ function wrapChart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisB
                     bottom.top(top.height + body.height);
                     connect(bottom, body);
                     connect(bottom, top);
-                    if (panConstraint === "diagonal") {
+                    if (panConstraint === "diagonal" || panConstraint === "antidiagonal") {
                         connect(left, top);
+                        connect(bottom, right);
+                        connect(top, right);
+                        connect(bottom, left);
                     }
                     element.style.position = 'relative';
                     element.style.width = String(left.width + body.width + right.width) + 'px';
