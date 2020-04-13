@@ -1,5 +1,5 @@
 # WrappingChart
-![Compose Wrapping charts from images](WrapChart.gif)
+[![Compose Wrapping charts from images](WrapChart.gif)](https://ialab.it.monash.edu/~dwyer/WrappingChart)
 ```
 npm install
 npm build
@@ -31,8 +31,15 @@ function chart(
     xAxisTopImageURL: string|null,
     xAxisBottomImageURL: string|null,
     yAxisLeftImageURL: string|null,
-    yAxisRightImageURL: string|null) 
+    yAxisRightImageURL: string|null,
+    panConstraint: Constraint|undefined) 
 ```
 It assumes that axes images are sized correctly for the body image, i.e. that x Axes are the same width as the body, and that y-axes are the same height as the body.
 
 Note that you can specify ```null``` instead of an image for any of the axes labels and they will simply be omitted from the chart.
+The last argument ```panConstraint``` can be left off, or specified as one of:
+```
+type Constraint = "horizontal" | "vertical" | "diagonal" | "antidiagonal"
+```
+
+If specified, this limits panning to a particular direction.
