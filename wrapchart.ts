@@ -1,5 +1,5 @@
 type Constraint = "horizontal" | "vertical" | "diagonal" | "antidiagonal"
-async function chart(
+async function wrapChart(
     targetElementSelector:string,
     bodyImageURL: string,
     xAxisTopImageURL: string|null,
@@ -17,6 +17,13 @@ async function chart(
         constructor(imageSrc: string|null, public width: number, public height: number, public horizontal: boolean, public vertical: boolean) {
             this.svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
             this.svg.style.position = 'absolute';
+            this.svg.style.cursor = horizontal && !vertical ? 'ew-resize' 
+                                  : vertical && !horizontal ? 'ns-resize' 
+                                  : panConstraint == 'horizontal' ? 'ew-resize' 
+                                  : panConstraint == 'vertical' ? 'ns-resize' 
+                                  : panConstraint == 'diagonal' ? 'nwse-resize' 
+                                  : panConstraint == 'antidiagonal' ? 'nesw-resize' 
+                                  : 'all-scroll';
             this.svg.setAttribute('viewBox',`0 0 ${width} ${height}`)
             this.svg.setAttribute('width',String(width))
             this.svg.setAttribute('height',String(height))

@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBottomImageURL, yAxisLeftImageURL, yAxisRightImageURL, panConstraint) {
+function wrapChart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBottomImageURL, yAxisLeftImageURL, yAxisRightImageURL, panConstraint) {
     return __awaiter(this, void 0, void 0, function () {
         function add(imgSrc, horizontal, vertical) {
             return __awaiter(this, void 0, void 0, function () {
@@ -102,6 +102,13 @@ function chart(targetElementSelector, bodyImageURL, xAxisTopImageURL, xAxisBotto
                             this.vertical = vertical;
                             this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                             this.svg.style.position = 'absolute';
+                            this.svg.style.cursor = horizontal && !vertical ? 'ew-resize'
+                                : vertical && !horizontal ? 'ns-resize'
+                                    : panConstraint == 'horizontal' ? 'ew-resize'
+                                        : panConstraint == 'vertical' ? 'ns-resize'
+                                            : panConstraint == 'diagonal' ? 'nwse-resize'
+                                                : panConstraint == 'antidiagonal' ? 'nesw-resize'
+                                                    : 'all-scroll';
                             this.svg.setAttribute('viewBox', "0 0 " + width + " " + height);
                             this.svg.setAttribute('width', String(width));
                             this.svg.setAttribute('height', String(height));
