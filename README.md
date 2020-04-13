@@ -15,7 +15,7 @@ Just consume the script, and create a div with a unique id somewhere in your pag
 Then call the ```chart``` function to populate the div with a wrap chart constructed from the specified images:
 ```
 <script>
-    chart("ChartDiv",
+    wrapChart("ChartDiv",
         "wrappablenswtraffic.png",
         "wrappablenswtraffic-xaxis-top.png",
         "wrappablenswtraffic-xaxis.png",
@@ -25,7 +25,7 @@ Then call the ```chart``` function to populate the div with a wrap chart constru
 ```
 Where the images will be used for the body of the chart and the axes labels on each side, as follows:
 ```
-function chart(
+function wrapChart(
     targetElementSelector:string,
     bodyImageURL: string,
     xAxisTopImageURL: string|null,
