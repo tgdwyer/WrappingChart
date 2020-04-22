@@ -10,11 +10,38 @@
 h1,h2,body {
     font-family: Helvetica, Arial, sans-serif;
 }
+#content {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
 </style>
 </head>
 <body>
+    <div id="content">
     <h1>Charts That Wrap Around</h1>
-    <h2>Simple horizontal wrapping, left and bottom axes</h2> 
+    <p> Drag your mouse (or finger on a touch screen) over the charts below to see how they wrap around.
+        Source code on <a href="https://github.com/tgdwyer/WrappingChart">github</a>.
+    </p>
+    <h2>Simple horizontal wrapping - Geographic Projection</h2> 
+    <div id="hobodyer-wrap"></div>
+    <p>
+        An <a href="https://en.wikipedia.org/wiki/Hobo%E2%80%93Dyer_projection">Hoby-Dyer Projection</a> 
+        of the world map.
+        Only horizontal panning makes sense - panning vertically would need to invert the map to keep adjacencies of continents on the earths surface correct.
+        We call <code>wrapChart</code> with a <code>"horizontal"</code> pan constraint to limit the panning.
+    </p>
+    <script>
+        wrapChart("hobodyer-wrap",
+            "images/hobodyer.jpg",
+            null,
+            null,
+            null,
+            null,
+            "horizontal")
+    </script>
+    <br>
+    <h2>Simple horizontal Wrapping Chart, left and bottom axes</h2> 
     <div id="simpleHorizontalWrap"></div>
     <p>
         Mean rainfall over months of the year since records began.  
@@ -52,7 +79,9 @@ h1,h2,body {
     <h2>Vertical pan constraint</h2> 
     <div id="verticalSankey"></div>
     <p>
-    A cyclical Sankey diagram, laid-out on a cyclinder so that the cycle wraps around.
+    A cyclical Sankey diagram, laid-out on a cyclinder so that the cycle wraps around.  
+    The original use of Sankey diagrams was to show energy transfer in engines.  Such systems often have cycles.
+    The diagram above opens up the cycle so energy transfer direction is always downwards.
     <a href="https://www.sciencedirect.com/science/article/pii/S1876610217305726">Thermodynamic analysis of water injection in a micro gas turbine</a>
     </p>
     <script>
@@ -111,5 +140,6 @@ h1,h2,body {
             "images/rockPaperScissorsLizardSpock-yaxis-right.png",
             "antidiagonal")   
     </script>
+    </div>
 </body>
 </html>
